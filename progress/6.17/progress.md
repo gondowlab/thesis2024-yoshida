@@ -14,7 +14,7 @@
 
 ### Wasmのリニアメモリ構成
 
-<img src="https://hackmd.io/_uploads/BktnnHFSR.png" width=60%> <br>
+<img src="./img/stack_layout.png" width=60%> <br>
 
 - リニアメモリは、ランタイムが予約された仮想メモリ空間からマップする単一の連続したバイト配列
 - 主にヒープ部、データ部、スタック部の3つの部分から構成される
@@ -49,14 +49,15 @@ fclose(f);
   - page tabelを拡張したフィールドに設定
   - 最大16($4^2 = 16$)個のキーを用いて、各ページテーブルをタグ付けできる.
 
-![図1](https://hackmd.io/_uploads/rJRl5i5BA.png)
+<img src="./img/PKey.png" width=60%> <br>
 
 - **PKRUレジスタ** - 各protection keyに対応するアクセス権限を設定するレジスタ - メモリ・アクセスのたびにPKRUとPTEのprotection keyを比較し、許可をチェックする. - 16(protection key) \* 2(Access Disable, Write Disable)で設定する.
-  ![スクリーンショット 2024-06-15 14.53.21](https://hackmd.io/_uploads/SyYinjqr0.png)
+
+<img src="./img/PKRU_register.png" width=60%> <br>
 
 ### リニアメモリのドメイン分割
 
-![スクリーンショット 2024-06-15 20.53.47](https://hackmd.io/_uploads/HyP6gbsSA.png)
+<img src="./img/PKUWA.png" width=60%> <br>
 
 - リニアメモリを複数のドメインに分割し、各ドメインへの関数のアクセス権を制御する.
 - intel MPKを利用してリニアメモリの各セグメントを最大16個のドメインに分割する.
