@@ -155,7 +155,7 @@ Contents of section Custom:
   - WasmからIRの変換時やバックエンドパスでのセキュリティ対策や最適化に対応できる
     - 例: wasmからIRへの変換時にメモリアクセス時の境界チェックが挿入される.
 
-<img src="./img/implement.png"　 width="50%"/>
+<img src="./img/implement.png" width="50%"/>
 
 ### 今週の予定
 
