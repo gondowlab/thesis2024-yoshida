@@ -1,2 +1,8 @@
 .DS_Store
-
+main.blg 
+main.dvi 
+main.fdb_latexmk 
+main.log  
+main.fls 
+main.aux 
+main.synctex.gz

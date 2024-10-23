@@ -1,0 +1,72 @@
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{latexsym}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{mdframed}
+\usepackage{caption}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{color}
+\usepackage{ulem}
+\usepackage{url}
+\usepackage{subcaption}
+\usepackage {amsmath}
+\usepackage{stmaryrd}
+\usepackage{amsthm}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage {threeparttable}
+\usepackage{spreadtab}
+\usepackage{xcolor}
+
+% \definecolor{mygreen}{rgb}{0,0.6,0}
+% \definecolor{mygray}{rgb}{0.5,0.5,0.5}
+% \definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\definecolor{highlightDel}{RGB}{249,216,214}
+\definecolor{highlightAdd}{RGB}{177,239,196}
+
+% ハイライト用のコマンドを定義
+\newcommand{\del}[1]{\colorbox{highlightDel}{#1}}
+\newcommand{\add}[1]{\colorbox{highlightAdd}{#1}}
+
+% settings for minted
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\mdfdefinestyle{mystyle}{
+  linecolor=black,
+  topline=true,
+  bottomline=true,
+  leftline=true,
+  rightline=true,
+  innertopmargin=2pt,
+  innerbottommargin=3pt,
+  innerleftmargin=3pt,
+  innerrightmargin=2pt,
+  roundcorner=4pt
+}
+\surroundwithmdframed[style=mystyle]{minted}
+
+% settings for listing
+\lstset{
+  basicstyle={\ttfamily},
+  breaklines=true,
+  captionpos=b,
+  columns=[l]{fullflexible},
+  commentstyle={\smallitshape},
+  frame={single},
+  identifierstyle={\small},
+  keywordstyle={\small\bfseries},
+  lineskip=-0.5ex,
+  ndkeywordstyle={\small},
+  numbers=left,
+  numbersep=1zw,
+  numbersep=5pt,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  stringstyle={\small\ttfamily},
+  xleftmargin=3zw,
+  xrightmargin=0zw,
+}
+
+\newtheorem{definition}{定義}

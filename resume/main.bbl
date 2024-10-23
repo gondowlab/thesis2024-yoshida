@@ -1,0 +1,67 @@
+\begin{thebibliography}{10}
+
+\bibitem{percival2005cache}
+Colin Percival.
+\newblock Cache missing for fun and profit, 2005.
+
+\bibitem{yarom2014flush+}
+Yuval Yarom and Katrina Falkner.
+\newblock $\{$FLUSH+ RELOAD$\}$: A high resolution, low noise, l3 cache
+  $\{$Side-Channel$\}$ attack.
+\newblock In {\em 23rd USENIX security symposium (USENIX security 14)}, pp.
+  719--732, 2014.
+
+\bibitem{kocher2020spectre}
+Paul Kocher, Jann Horn, Anders Fogh, Daniel Genkin, Daniel Gruss, Werner Haas,
+  Mike Hamburg, Moritz Lipp, Stefan Mangard, Thomas Prescher, et~al.
+\newblock Spectre attacks: Exploiting speculative execution.
+\newblock {\em Communications of the ACM}, Vol.~63, No.~7, pp. 93--101, 2020.
+
+\bibitem{lipp2020meltdown}
+Moritz Lipp, Michael Schwarz, Daniel Gruss, Thomas Prescher, Werner Haas, Jann
+  Horn, Stefan Mangard, Paul Kocher, Daniel Genkin, Yuval Yarom, et~al.
+\newblock Meltdown: Reading kernel memory from user space.
+\newblock {\em Communications of the ACM}, Vol.~63, No.~6, pp. 46--56, 2020.
+
+\bibitem{canella2019systematic}
+Claudio Canella, Jo~Van~Bulck, Michael Schwarz, Moritz Lipp, Benjamin Von~Berg,
+  Philipp Ortner, Frank Piessens, Dmitry Evtyushkin, and Daniel Gruss.
+\newblock A systematic evaluation of transient execution attacks and defenses.
+\newblock In {\em 28th USENIX Security Symposium (USENIX Security 19)}, pp.
+  249--266, 2019.
+
+\bibitem{bhattacharyya2019smotherspectre}
+Atri Bhattacharyya, Alexandra Sandulescu, Matthias Neugschwandtner, Alessandro
+  Sorniotti, Babak Falsafi, Mathias Payer, and Anil Kurmus.
+\newblock Smotherspectre: exploiting speculative execution through port
+  contention.
+\newblock In {\em Proceedings of the 2019 ACM SIGSAC Conference on Computer and
+  Communications Security}, pp. 785--800, 2019.
+
+\bibitem{schwarz2019store}
+Michael Schwarz, Claudio Canella, Lukas Giner, and Daniel Gruss.
+\newblock Store-to-leak forwarding: leaking data on meltdown-resistant cpus
+  (updated and extended version).
+\newblock {\em arXiv preprint arXiv:1905.05725}, 2019.
+
+\bibitem{weber2021osiris}
+Daniel Weber, Ahmad Ibrahim, Hamed Nemati, Michael Schwarz, and Christian
+  Rossow.
+\newblock Osiris: Automated discovery of microarchitectural side channels.
+\newblock In {\em 30th USENIX Security Symposium (USENIX Security 21)}, pp.
+  1415--1432, 2021.
+
+\bibitem{moghimi2020medusa}
+Daniel Moghimi, Moritz Lipp, Berk Sunar, and Michael Schwarz.
+\newblock Medusa: Microarchitectural data leakage via automated attack
+  synthesis.
+\newblock In {\em 29th USENIX Security Symposium (USENIX Security 20)}, pp.
+  1427--1444, 2020.
+
+\bibitem{oleksenko2023hide}
+Oleksii Oleksenko, Marco Guarnieri, Boris K{\"o}pf, and Mark Silberstein.
+\newblock Hide and seek with spectres: Efficient discovery of speculative
+  information leaks with random testing.
+\newblock {\em arXiv preprint arXiv:2301.07642}, 2023.
+
+\end{thebibliography}

@@ -1,0 +1,124 @@
+\documentclass[a4paper,11pt,oneside,openany,report]{jsbook}
+
+\usepackage[left=30mm,right=30mm,top=25mm,bottom=25mm]{geometry}
+\usepackage{cscover}
+\usepackage[nobreak]{cite}
+\usepackage[a4paper,dvipdfmx,pdfdisplaydoctitle=true,%
+    bookmarks=true,bookmarksnumbered=true,bookmarkstype=toc,bookmarksopen=true,%
+    pdftitle={投機実行中のメモリアクセス制御による広範なSpectre攻撃の防御},%
+    pdfauthor={内田悠介}%
+    ]{hyperref}
+\usepackage{pxjahyper}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% global package settings, macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{package.tex}
+\input{macros.tex}
+
+\renewcommand{\bibname}{参考文献}
+\setcounter{tocdepth}{2}
+\pagestyle{plain}
+
+\newcommand{\TODO}[1]{\textbf{[TODO: #1]}}
+%\renewcommand{\TODO}[1]{}
+
+\thesistype{修士論文}
+\title{効率的なSpectreガジェットの検出}
+\author{吉田 昂太}
+\studentid{23M30767}
+\affiliation{東京工業大学\\情報理工学院\\情報工学系\\情報工学コース} 
+\date{2025年1月}
+
+\supervisorname{指導教員}
+\supervisor{権藤 克彦}
+%\dsupervisorname{副指導教員}
+%\dsupervisor{工学 次郎}
+
+% デフォルトの定義を保存
+\let\oldsection\section
+\let\oldsubsection\subsection
+\let\oldsubsubsection\subsubsection
+% \let\oldsection*\section*
+% \let\oldsubsection*\subsection*
+% \let\oldsubsubsection*\subsubsection*
+
+% 定義を上書き
+\renewcommand{\section}[1]{\chapter{#1}}
+\renewcommand{\subsection}[1]{\oldsection{#1}}
+\renewcommand{\subsubsection}[1]{\oldsubsection{#1}}
+% \renewcommand{\section*}[1]{\chapter*{#1}}
+% \renewcommand{\subsection*}[1]{\oldsection*{#1}}
+% \renewcommand{\subsubsection*}[1]{\oldsubsection*{#1}}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 概要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/010abstract.tex}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mainmatter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% はじめに
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/020introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 背景知識
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/031background.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 問題設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/040problem.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 提案手法
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/050proposal.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 実装
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/050implementation.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 実験と評価
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/060evaluation.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 関連研究
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/070related_works.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% まとめ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/080conclusion.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% まとめ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{sections/090misc.tex}
+
+\backmatter
+\input{sections/980aknowledgment.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \input{sections/990bib.tex}
+
+\end{document}

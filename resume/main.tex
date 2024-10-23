@@ -1,0 +1,92 @@
+
+\documentclass[submit]{ipsj}
+%\documentclass{ipsj}
+
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{cite}
+
+
+\setcounter{巻数}{59}
+\setcounter{号数}{1}
+\setcounter{page}{1}
+
+
+\受付{xxxx}{0}{0}
+\採録{xxxx}{0}{0}
+
+% newblockが未定義でbibtexが機能しない
+\makeatletter
+\newcommand\newblock{\hskip .11em\@plus.33em\@minus.07em}
+\makeatother
+
+
+\begin{document}
+
+
+\title{論文タイトル}
+
+\author{吉田 昂太}{Kota Yoshida}{IPSJ}
+
+% \begin{abstract}
+% \end{abstract}
+
+% \begin{jkeyword}
+% サイドチャネル攻撃, 投機的実行, ファジング
+% \end{jkeyword}
+
+\maketitle
+
+%1
+\section{概要}
+現在の多くのプロセッサは投機的実行を悪用するSpectre攻撃に対して脆弱である。これらの攻撃に対処するソフトウェアベースの方法として、プログラム中からSpectre攻撃に対して脆弱なコード辺(Spectreガジェット)を特定し、部分的に投機的実行を抑制する方法がある。既存研究ではSpectreガジェットを検出する方法として記号実行を用いる手法が提案されているが、通常の実行パスと投機的実行パスの両方を探索する必要があるため、探索する状態空間が非常に多くなり複雑なプログラムに対してスケールしない問題がある。本論文では、Spectreガジェットの検出確率が低い投機的な状態の探索を避けることで、記号実行のスケーラビリティを向上させる手法を提案する。また、記号実行において探索されなかった投機的状態はファジングを用いて探索することで、スケーラビリティと精度の両立を目指す。
+
+%2
+\section{はじめに}
+
+%3
+\section{背景}
+\subsection{Speculative execution}
+
+\subsection{Transient Execution Attack}
+一時実行攻撃とは、CPUの投機的実行によって一時的に実行される命令がマイクロアーキテクチャに痕跡を残すことを利用する攻撃法である。本来、CPUは誤った投機的実行が行われた場合、その結果はマイクロアーキテクチャに反映されず、パイプラインはフラッシュされる。しかし、キャッシュなどの一部のマイクロアーキテクチャの状態はパフォーマンスの観点からそのまま維持される。攻撃者はこれをPrime+Probe\cite{percival2005cache}やFlush+Reload\cite{yarom2014flush+}でサイドチャネルを経由して秘密情報を読み取る。
+一時実行攻撃は2018年に Spectre攻撃\cite{kocher2020spectre}と Meltdown攻撃\cite{lipp2020meltdown}が初めて明らかにされて以来、様々なCPUを標的とした、多数の新しい一時実行攻撃が発見されてきた。これらの攻撃は大きく分けてSpectre型とMeltdown型に分類される\cite{canella2019systematic}。Spectre型は分岐予測ミスに続く一時的な命令を悪用する。一方で, Meltdown型はフォールトを発生させる命令に続く一時的な命令を悪用する。一時実行攻撃では、通常キャッシュを利用して漏洩したデータを読み取るが、他のサイドチャネルが利用される場合もある\cite{bhattacharyya2019smotherspectre,schwarz2019store}。
+
+
+\subsection{Spectre attack}
+
+\subsection{記号実行}
+
+\subsection{ファジング}
+ファジングは、ソフトウェアの欠陥や脆弱性を検出することを目的としたテスト手法である。ファジングは多数のテストケースを対象ソフトウェアへの入力として生成し、その実行結果を観測することでバグや脆弱性を検出する。単純にランダムにテストケースを生成すると入力空間が膨大になり非効率的であるため、多くのファジングツールは冗長なテストケースやバグを起こす可能性の低いテストケースの生成を回避する手法を用いている。ファジングに関するほとんどの研究はソフトウェアをテストすることを目的としているが、近年、ハードウェアを対象としたファジングの研究が活発になっている\cite{weber2021osiris, moghimi2020medusa, oleksenko2023hide}。Osiris\cite{weber2021osiris}はタイミングベースのサイドチャネル攻撃の特性を利用することで、ターゲットCPUのタイミングベースのサイドチャネルを自動で検出することができる。Transynther\cite{moghimi2020medusa}は投機的実行を引き起こすことが知られているコードを変更し、マイクロアーキテクチャデータサンプリング(MDS)攻撃の亜種を検出できるツールである。Revizor\cite{oleksenko2023hide}は商用のブラックボックスCPUにおける投機的実行による脆弱性を検出するツールである。
+
+
+\section{KLEESpectre}
+
+
+%4
+\section{問題設定}
+モチベ例について説明 \\
+SpecFuzzの結果を引用 \\
+
+%5
+\section{提案手法}
+
+%6
+\section{実装}
+
+%7
+\section{評価}
+
+%8
+\section{関連研究}
+
+%9
+\section{結論}
+
+\bibliographystyle{junsrt}
+\bibliography{references}
+
+
+
+\end{document}
