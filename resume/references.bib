@@ -1,23 +1,80 @@
-@article{kocher2020spectre,
-  title={Spectre attacks: Exploiting speculative execution},
-  author={Kocher, Paul and Horn, Jann and Fogh, Anders and Genkin, Daniel and Gruss, Daniel and Haas, Werner and Hamburg, Mike and Lipp, Moritz and Mangard, Stefan and Prescher, Thomas and others},
-  journal={Communications of the ACM},
-  volume={63},
-  number={7},
-  pages={93--101},
-  year={2020},
-  publisher={ACM New York, NY, USA}
+@INPROCEEDINGS{8835233,
+  author={Kocher, Paul and Horn, Jann and Fogh, Anders and Genkin, Daniel and Gruss, Daniel and Haas, Werner and Hamburg, Mike and Lipp, Moritz and Mangard, Stefan and Prescher, Thomas and Schwarz, Michael and Yarom, Yuval},
+  booktitle={2019 IEEE Symposium on Security and Privacy (SP)}, 
+  title={Spectre Attacks: Exploiting Speculative Execution}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-19},
+  keywords={Program processors;Microarchitecture;Registers;Arrays;Transient analysis;Hardware;Side-channel attacks;Spectre;speculative-execution;microarchitecture-security;microarchitectural-attack},
+  doi={10.1109/SP.2019.00002}}
+
+@inproceedings {217478,
+author = {Moritz Lipp and Michael Schwarz and Daniel Gruss and Thomas Prescher and Werner Haas and Anders Fogh and Jann Horn and Stefan Mangard and Paul Kocher and Daniel Genkin and Yuval Yarom and Mike Hamburg},
+title = {Meltdown: Reading Kernel Memory from User Space},
+booktitle = {27th USENIX Security Symposium (USENIX Security 18)},
+year = {2018},
+isbn = {978-1-939133-04-5},
+address = {Baltimore, MD},
+pages = {973--990},
+url = {https://www.usenix.org/conference/usenixsecurity18/presentation/lipp},
+publisher = {USENIX Association},
+month = aug
 }
 
-@article{lipp2020meltdown,
-  title={Meltdown: Reading kernel memory from user space},
-  author={Lipp, Moritz and Schwarz, Michael and Gruss, Daniel and Prescher, Thomas and Haas, Werner and Horn, Jann and Mangard, Stefan and Kocher, Paul and Genkin, Daniel and Yarom, Yuval and others},
-  journal={Communications of the ACM},
-  volume={63},
-  number={6},
-  pages={46--56},
-  year={2020},
-  publisher={ACM New York, NY, USA}
+@inproceedings {220586,
+author = {Esmaeil Mohammadian Koruyeh and Khaled N. Khasawneh and Chengyu Song and Nael Abu-Ghazaleh},
+title = {Spectre Returns! Speculation Attacks using the Return Stack Buffer},
+booktitle = {12th USENIX Workshop on Offensive Technologies (WOOT 18)},
+year = {2018},
+address = {Baltimore, MD},
+url = {https://www.usenix.org/conference/woot18/presentation/koruyeh},
+publisher = {USENIX Association},
+month = aug
+}
+
+@inproceedings{10.1145/3243734.3243761,
+author = {Maisuradze, Giorgi and Rossow, Christian},
+title = {ret2spec: Speculative Execution Using Return Stack Buffers},
+year = {2018},
+isbn = {9781450356930},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3243734.3243761},
+doi = {10.1145/3243734.3243761},
+ooktitle = {Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security},
+pages = {2109–2122},
+numpages = {14},
+keywords = {side channel attacks, javascript, hardware security},
+location = {Toronto, Canada},
+series = {CCS '18}
+}
+
+@article{horn2018speculative,
+  title={speculative execution, variant 4: speculative store bypass},
+  author={Horn, Jann},
+  year={2018}
+}
+
+@inproceedings{van2018foreshadow,
+  title={Foreshadow: Extracting the keys to the intel $\{$SGX$\}$ kingdom with transient $\{$Out-of-Order$\}$ execution},
+  author={Van Bulck, Jo and Minkin, Marina and Weisse, Ofir and Genkin, Daniel and Kasikci, Baris and Piessens, Frank and Silberstein, Mark and Wenisch, Thomas F and Yarom, Yuval and Strackx, Raoul},
+  booktitle={27th USENIX Security Symposium (USENIX Security 18)},
+  pages={991--1008},
+  year={2018}
+}
+
+@article{weisse2018foreshadow,
+  title={Foreshadow-NG: Breaking the virtual memory abstraction with transient out-of-order execution},
+  author={Weisse, Ofir and Van Bulck, Jo and Minkin, Marina and Genkin, Daniel and Kasikci, Baris and Piessens, Frank and Silberstein, Mark and Strackx, Raoul and Wenisch, Thomas F and Yarom, Yuval},
+  year={2018}
+}
+
+@article{stecklina2018lazyfp,
+  title={Lazyfp: Leaking fpu register state using microarchitectural side-channels},
+  author={Stecklina, Julian and Prescher, Thomas},
+  journal={arXiv preprint arXiv:1806.07480},
+  year={2018}
 }
 
 @inproceedings{canella2019systematic,
@@ -26,6 +83,24 @@
   booktitle={28th USENIX Security Symposium (USENIX Security 19)},
   pages={249--266},
   year={2019}
+}
+
+@inproceedings{van2019ridl,
+  title={RIDL: Rogue in-flight data load},
+  author={Van Schaik, Stephan and Milburn, Alyssa and {\"O}sterlund, Sebastian and Frigo, Pietro and Maisuradze, Giorgi and Razavi, Kaveh and Bos, Herbert and Giuffrida, Cristiano},
+  booktitle={2019 IEEE Symposium on Security and Privacy (SP)},
+  pages={88--105},
+  year={2019},
+  organization={IEEE}
+}
+
+@inproceedings{van2020lvi,
+  title={LVI: Hijacking transient execution through microarchitectural load value injection},
+  author={Van Bulck, Jo and Moghimi, Daniel and Schwarz, Michael and Lippi, Moritz and Minkin, Marina and Genkin, Daniel and Yarom, Yuval and Sunar, Berk and Gruss, Daniel and Piessens, Frank},
+  booktitle={2020 IEEE Symposium on Security and Privacy (SP)},
+  pages={54--72},
+  year={2020},
+  organization={IEEE}
 }
 
 @inproceedings{bhattacharyya2019smotherspectre,
