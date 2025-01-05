@@ -5,14 +5,15 @@
 \usepackage[nobreak]{cite}
 \usepackage[a4paper,dvipdfmx,pdfdisplaydoctitle=true,%
     bookmarks=true,bookmarksnumbered=true,bookmarkstype=toc,bookmarksopen=true,%
-    pdftitle={投機実行中のメモリアクセス制御による広範なSpectre攻撃の防御},%
-    pdfauthor={内田悠介}%
+    pdftitle={スケーラブルかつ高精度なSpectre脆弱性の検出手法},%
+    pdfauthor={吉田昂太}%
     ]{hyperref}
 \usepackage{pxjahyper}
-
+\usepackage{indentfirst}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% global package settings, macros
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \input{package.tex}
 \input{macros.tex}
 
@@ -24,10 +25,10 @@
 %\renewcommand{\TODO}[1]{}
 
 \thesistype{修士論文}
-\title{効率的なSpectreガジェットの検出}
+\title{スケーラブルかつ高精度な\\Spectre脆弱性の検出手法}
 \author{吉田 昂太}
 \studentid{23M30767}
-\affiliation{東京工業大学\\情報理工学院\\情報工学系\\情報工学コース} 
+\affiliation{東京科学大学\\情報理工学院\\情報工学系\\情報工学コース} 
 \date{2025年1月}
 
 \supervisorname{指導教員}
@@ -59,7 +60,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 概要
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/010abstract.tex}
+\input{sections/abstract.tex}
 
 \tableofcontents
 \listoffigures
@@ -72,42 +73,44 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% はじめに
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/020introduction.tex}
+\input{sections/introduction.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 背景知識
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/031background.tex}
+\input{sections/background.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 問題設定
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/040problem.tex}
+\input{sections/problem.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 提案手法
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/050proposal.tex}
+\input{sections/proposal.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 実装
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/050implementation.tex}
+\input{sections/implementation.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 実験と評価
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/060evaluation.tex}
+\input{sections/evaluation.tex}
+
+\input{sections/future.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 関連研究
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/070related_works.tex}
+\input{sections/related_works.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% まとめ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{sections/080conclusion.tex}
+\input{sections/conclusion.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% まとめ
@@ -115,10 +118,11 @@
 % \input{sections/090misc.tex}
 
 \backmatter
-\input{sections/980aknowledgment.tex}
+\input{sections/aknowledgment.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \input{sections/990bib.tex}
+\bibliographystyle{plain}
+\bibliography{references}
+% \input{sections/bib.tex}
 
 \end{document}

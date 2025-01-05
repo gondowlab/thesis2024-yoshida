@@ -1,0 +1,126 @@
+\section{問題設定}
+本論文では、スケーラビリティと精度を両立するSpectreガジェットの検出手法を提案する。Spectreガジェットを正確かつ効率的に検出することは、最低限の実行時オーバーヘッドでプログラムをSpectre攻撃に対して堅牢化するために不可欠である。以降では、まず既存のSpectreガジェット検出手法が抱える問題点について述べる。その後、その問題点を示すMotivating Exampleを提示し、本研究の目的を明確化する。
+
+\subsection{既存手法の問題点}
+
+\subsubsection{記号実行}
+
+\begin{figure}
+  \begin{minted}[linenos,escapeinside=@@,label=BCB,autogobble]{c}
+    int i;
+    symbolic_var(i); // Symbolize variable i
+    while(i > 0) {
+      ...
+      i--;
+    }
+\end{minted}
+  \caption{記号実行におけるパス爆発}
+  \label{path_explosion}
+\end{figure}
+
+
+
+記号実行を用いたSpectre gadgetの検出手法\cite{guarnieri2020spectector,wang2020kleespectre}の問題点は、大規模なプログラムに対してスケールしないという点である。これは一般的な記号実行による解析に共通する問題でもあるが、Spectre gadgetの検出ツールは通常のパスに加えて、投機的なパスも考慮する必要があるため、これはより顕著な問題となる。この問題の主な原因はパス爆発とストア状態の爆発として知られている\cite{baldoni2018survey}。\par
+
+パス爆発とは、プログラム内の分岐数に比例して探索すべき実行パスが指数関数的に増加する現象を指す。記号実行エンジンは、分岐箇所に遭遇すると現在の状態を分岐方向ごとに分割し、新たな状態を生成する。このため、分岐が多いプログラムでは実行パスの数が急激に増加し、解析のための実行時間やメモリ使用量が膨大となる。結果として、すべての実行パスを網羅的に解析することが現実的に不可能となる場合がある。\par
+
+パス爆発の主な原因の一つは、ループ構造に起因するものである。ループは分岐命令として扱われるため、各反復ごとに分岐方向に対応する新しい状態が生成される。さらに、図\ref{path_explosion}に示すように、ループ条件に記号化された変数が含まれる場合、ループの反復回数が具体的に決定できず、最大のループ回数を想定して解析が行われる可能性がある。一般的なツールでは、ループの解析を限られた回数に制限しているが、この場合、検出対象を見逃す可能性もある。\par
+
+\begin{figure}
+  \begin{minted}[linenos,escapeinside=@@,label=BCB,autogobble]{c}
+    size_t i, j;
+    int temp;
+    symbolic_var(i); // Symbolize variable i
+    symbolic_var(j); // Symbolize variable j
+    int array[5] = {0};
+    if(i < 5 && j < 5) {
+      array[i] = 1;
+      temp = array[j];
+    }
+\end{minted}
+  \caption{記号実行におけるストア状態の爆発}
+  \label{store_explosion}
+\end{figure}
+
+
+ストア状態の爆発とは、記号実行において抽象的に扱われるメモリ状態の数が急激に増加する現象を指す。記号実行エンジンは、プログラムのメモリ操作を正確にモデル化するために、各メモリアドレスを具体的な値または記号式に関連付けたストア状態というデータ構造を保持する。そのため、記号化されたアドレスに対して読み取りや書き込みが行われる場合、操作の結果として生じる可能性のある全てのストア状態を考慮する必要がある。その結果、新しいストア状態が次々に生成され、ストア状態の数が急激に増加する。この現象は、大規模なプログラムや複雑なメモリアクセスパターンを持つコードにおいて特に顕著である。\par
+
+図\ref{store_explosion}に示すコード例を用いて、ストア状態の爆発について具体的に説明する。このコードでは、変数\var{i}と\var{j}が記号化されている。まず、7行目の配列への書き込みに注目する。この箇所では、\var{i}が記号化されているため、\var{array[0]}から\var{array[4]}のいずれかの要素が1に書き換えられる可能性がある。その結果、これら5つのケースを全て考慮するため、7行目の実行後に現在の状態から5つの新しい状態が分岐される。
+同様に、8行目の配列への読み取りにおいても、\var{j}が記号化されているため、\var{array[0]}から\var{array[4]}のいずれかの要素が読み取られ、変数\var{temp}に格納される。この場合も、5つのパターンを考慮するため、8行目の実行後にさらに5つの新しい状態が分岐し、最終的には最初の状態から新しく25個の状態に分岐することになる。\par
+この例では、変数\var{i},\var{j}の範囲が制限されていたため、メモリ操作が参照する可能性のあるアドレスのセットは比較的小さかったが、一般的には、記号化されたアドレスはメモリ内の任意のアドレスを参照する可能性があるため、ストア状態の数が爆発的に増加する可能性がある。\par
+パス爆発とストア状態の爆発の問題は、記号実行を用いてSpectre gadgetを検出する場合により顕著になる。これは、分岐予測ミスによる投機的なパスを考慮することで、通常の記号実行に比べて探索すべきパス数が大幅に増加するからである。通常の実行パス上の状態と異なり、投機的なパス上の状態は投機ウィンドウの上限に達した時点で破棄されるため最後まで残ることはない。しかし、それでも解析時間や最大メモリ使用量に大きな影響を与えるため、大規模なプログラムや複雑な制御フローを持つプログラムに対しては特にスケールしない。\par
+
+\subsubsection{ファジング}
+ファジングを用いたSpectre gadgetの検出手法における主な問題点は、カバレッジ不足によるGadgetの見逃しが発生する可能性がある点である。ファジングは記号実行とは異なり、生成された入力によって実行されたパス上に存在するgadgetしか検出できない。この制約は、一般的なファジングツールに共通する問題でもある。\par
+さらに、ファザーが脆弱性を引き起こす入力を生成しない場合、Spectre gadgetを検出することはできない。例えば、図\ref{BCB}に示すコードを考える。ここで、ファザーが条件\var{i < array1\_size}を満たす入力\var{i}を生成した場合、3行目および4行目は通常実行される。そのため当然、3行目で境界外アクセスが発生しないので、脆弱性は検出されない。一方、\var{i < array1\_size}を満たさない入力\var{i}を生成することで、3行目及び4行目が投機実行がシミュレートされ、3行目の境界外アクセスが引き起こされ、初めて脆弱性を検出できる。このように、ファジングによるSpectre gadgetの検出は、通常の実行パスだけでなく、投機的なパスも漏れなくテストすることが必要である。\par
+
+\subsection{MotivatingExample}
+
+\begin{figure}
+  \begin{minted}[linenos,escapeinside=@@,label=BCB,autogobble]{c}
+#include <stdint.h>
+#include <stdlib.h>
+#define ARRAY1_SIZE 16
+uint8_t array1[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+uint8_t array2[256 * 512];
+uint8_t temp = 0;
+
+void var(size_t index) {
+    if (index < ARRAY1_SIZE / 2) {   // br2
+        // C
+        temp &= array2[array1[index] * 512];
+        if (index < ARRAY1_SIZE / 4) {  // br3
+            // D
+            temp &= array2[array1[index] * 512];
+        }
+    }
+    // E
+}
+
+void foo(size_t index) {
+  while (index < ARRAY1_SIZE) {  // br1
+    // A
+    temp &= array2[array1[index] * 512];
+    var(index);
+    ++index;
+  }
+    // B
+}
+
+int main() {
+  size_t num = input();
+  foo(num);
+  return 0;
+}
+   \end{minted}
+  \caption{Motivating Example}
+  \label{MotivatingExample}
+\end{figure}
+
+図\ref{MotivatingExample}は、記号実行を用いたSpectre gadgetの検出において、投機的な状態数が爆発する具体例を示している。この図には、3つのSpectre gadgetが含まれている。1つ目は、18行目の分岐予測がミスされた後に実行される9行目の命令である。2つ目は、9行目と18行目の両方の分岐予測がミスされた後に実行される10行目の命令である。そして3つ目は、18行目、9行目、11行目の全ての分岐予測がミスされた後に実行される12行目の命令である。先述の通り、CPUはネストされた投機実行が可能であり、既存の記号実行による手法\cite{guarnieri2020spectector,wang2020kleespectre}では、これらのgadgetを漏れなく検出するため、ネストされた分岐予測ミスをシミュレートする必要がある。そのため、投機ウィンドウの上限に達するまで、分岐命令に遭遇するたびに以下の4つの新たな状態が生成され、状態数の爆発に大きく寄与していると考えられる。\par
+
+\begin{itemize}
+  \item 分岐条件を満たし、Taken側へ遷移した状態
+  \item 分岐条件を満たさず、Not taken側へ遷移した状態
+  \item 分岐条件を満たさず、分岐予測ミスによりTaken側へ遷移した状態  
+  \item 分岐条件を満たし、分岐予測ミスによりNot taken側へ遷移した状態
+\end{itemize}
+
+しかし、既存研究\cite{oleksenko2020specfuzz}では、現実世界の検体において、10行目や12行目のような、ネストされた分岐予測ミスによりトリガーされるgadgetは少ないことが報告されている。この直感的な理由として、多くのメモリアクセス命令は、単一の境界チェック条件で保護されており、10行目や12行目のような複数の境界チェックで保護されているメモリアクセス命令は稀であるからと考えられる。また、複数の分岐命令を訓練することは、攻撃者にとって非常に困難であるため、このようなgadgetが実際の攻撃で利用される可能性は低いと考えられる。\par
+既存の記号実行による手法では、gadgetが検出される可能性の低い(あるいは、検出しても攻撃に利用されにくい)ネストされた分岐予測ミスにより到達する投機的な状態まで探索しているため、スケーラビリティが低下していると考える。\par
+
+表\ref{klee_test}に図\ref{MotivatingExample}をKLEESpectreで解析を行った結果を示す。実験環境は以降の説の通りである、投機ウィンドウのサイズはLLVM IRbレベルで200命令に設定した。表\ref{klee_test}からわかる通り、小規模な検体でありながら、通常実行において探索した状態数(State)に比べて、非常に多くの投機的な状態数(Speculative states)を探索している。これにより、通常の記号実行による解析と比較して、解析時間と最大メモリ使用量が大幅に増加していると考えられる。\par
+
+\begin{table}[h]
+  \centering
+  \caption{KLEESpectreによるMotivatingExampleの解析結果}
+  \label{klee_test}
+  \begin{tabular}{ccccc}
+    \toprule
+    \textbf{Detected gadgets} & \textbf{States} & \textbf{Speculative states} & \textbf{\shortstack{Time of analysis \\ (h:m:s)}} & \textbf{\shortstack{Maximum \\ Memory Usage (KB)}}  \\
+    \midrule
+    1         & 1                       & 1       &       1 &      1     \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
