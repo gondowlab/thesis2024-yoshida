@@ -1,9 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
-\PYG{c+cp}{\PYGZsh{}}\PYG{c+cp}{include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}x86intrin.h\PYGZgt{}}
-\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{input}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
-\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{array1\PYGZus{}size}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{  }\PYG{n}{\PYGZus{}mm\PYGZus{}lfence}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// Add lfence}
-\PYG{+w}{  }\PYG{n}{secret}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{array1}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{p}{;}
-\PYG{+w}{  }\PYG{n}{tmp}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{o}{=}\PYG{+w}{ }\PYG{n}{array2}\PYG{p}{[}\PYG{n}{secret}\PYG{p}{]}\PYG{p}{;}
-\PYG{p}{\PYGZcb{}}
-\end{Verbatim}
