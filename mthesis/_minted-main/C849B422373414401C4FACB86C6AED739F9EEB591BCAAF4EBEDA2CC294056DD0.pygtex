@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{input}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// controllable via input}
+
+\PYG{c+c1}{// Type1}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{temp}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{o}{=}\PYG{+w}{ }\PYG{n}{array2}\PYG{p}{[}\PYG{n}{array1}\PYG{p}{[}\PYG{n}{spec\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{512}\PYG{p}{]}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\PYG{c+c1}{// Type2}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{temp}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{o}{=}\PYG{+w}{ }\PYG{n}{array2}\PYG{p}{[}\PYG{n}{array1}\PYG{p}{[}\PYG{n}{spec\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{512}\PYG{p}{]}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\PYG{c+c1}{// Type3}
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{spec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{ARRAY1\PYGZus{}SIZE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{temp}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{o}{=}\PYG{+w}{ }\PYG{n}{array2}\PYG{p}{[}\PYG{n}{array1}\PYG{p}{[}\PYG{n}{spec\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{512}\PYG{p}{]}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

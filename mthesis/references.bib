@@ -65,7 +65,7 @@ series = {CCS '18}
   year={2018}
 }
 
-@misc{intel-specter,
+@misc{intel-channel,
   title = {Refined Speculative Execution Terminology},
   note = {\url{https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/best-practices/refined-speculative-execution-terminology.html}}
 }
@@ -211,7 +211,7 @@ series = {CCS '18}
 @misc{Spectre-v4,
   title = {speculative execution, variant 4: speculative store bypass},
   author = {J. Horn},
-  note = {\url{https://bugs.chromium.org/p/project-zero/issues/detail?id=1528}. Accessed: December, 2023}
+  note = {\url{https://bugs.chromium.org/p/project-zero/issues/detail?id=1528} Accessed: January, 2025}
 }
 
 @article{fog2016microarchitecture,
@@ -321,4 +321,129 @@ series = {CCS '18}
   booktitle={2012 USENIX annual technical conference (USENIX ATC 12)},
   pages={309--318},
   year={2012}
+}
+
+@misc{Honggfuzz,
+  title = {Honggfuzz},
+  author = {},
+  note = {\url{https://honggfuzz.dev/} Accessed: January 2025}
+}
+
+@misc{intel-meltdown,
+  author = {INTEL},
+  title = {Q2 2018 Speculative Execution Side Channel Update},
+  note = {\url{https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00115.html} Accessed: January 2025}
+}
+
+@article{stecklina2018lazyfp,
+  title={Lazyfp: Leaking fpu register state using microarchitectural side-channels},
+  author={Stecklina, Julian and Prescher, Thomas},
+  journal={arXiv preprint arXiv:1806.07480},
+  year={2018}
+}
+
+@misc{intel-meltdown-defence,
+  author = {INTEL},
+  title = {L1 Terminal Fault / CVE-2018-3615 , CVE-2018-3620,CVE-2018-3646 / INTEL-SA-00161},
+  note = {\url{https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/advisory-guidance/l1-terminal-fault.html} Accessed: January 2025}
+}
+
+@misc{KAISER,
+  author = {Jonathan Corbet},
+  title = {The current state of kernel page-table isolation},
+  note = {\url{https://lwn.net/Articles/741878/} Accessed: January 2025}
+}
+
+@inproceedings{yan2018invisispec,
+  title={Invisispec: Making speculative execution invisible in the cache hierarchy},
+  author={Yan, Mengjia and Choi, Jiho and Skarlatos, Dimitrios and Morrison, Adam and Fletcher, Christopher and Torrellas, Josep},
+  booktitle={2018 51st Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  pages={428--441},
+  year={2018},
+  organization={IEEE}
+}
+
+@inproceedings{saileshwar2019cleanupspec,
+  title={Cleanupspec: An" undo" approach to safe speculation},
+  author={Saileshwar, Gururaj and Qureshi, Moinuddin K},
+  booktitle={Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+  pages={73--86},
+  year={2019}
+}
+
+@inproceedings{weisse2019nda,
+  title={NDA: Preventing speculative execution attacks at their source},
+  author={Weisse, Ofir and Neal, Ian and Loughlin, Kevin and Wenisch, Thomas F and Kasikci, Baris},
+  booktitle={Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+  pages={572--586},
+  year={2019}
+}
+
+@inproceedings{schwarz2020context,
+  title={Context: A generic approach for mitigating spectre},
+  author={Schwarz, Michael and Lipp, Moritz and Canella, Claudio Alberto and Schilling, Robert and Kargl, Florian and Gruss, Daniel},
+  booktitle={Network and Distributed System Security Symposium 2020},
+  year={2020}
+}
+
+@inproceedings{reis2019site,
+  title={Site isolation: Process separation for web sites within the browser},
+  author={Reis, Charles and Moshchuk, Alexander and Oskov, Nasko},
+  booktitle={28th USENIX Security Symposium (USENIX Security 19)},
+  pages={1661--1678},
+  year={2019}
+}
+
+@inproceedings{narayan2021swivel,
+  title={Swivel: Hardening $\{$WebAssembly$\}$ against spectre},
+  author={Narayan, Shravan and Disselkoen, Craig and Moghimi, Daniel and Cauligi, Sunjay and Johnson, Evan and Gang, Zhao and Vahldiek-Oberwagner, Anjo and Sahita, Ravi and Shacham, Hovav and Tullsen, Dean and others},
+  booktitle={30th USENIX Security Symposium (USENIX Security 21)},
+  pages={1433--1450},
+  year={2021}
+}
+
+@INPROCEEDINGS{9152786,
+  author={Koruyeh, Esmaeil Mohammadian and Haji Amin Shirazi, Shirin and Khasawneh, Khaled N. and Song, Chengyu and Abu-Ghazaleh, Nael},
+  booktitle={2020 IEEE Symposium on Security and Privacy (SP)}, 
+  title={SpecCFI: Mitigating Spectre Attacks using CFI Informed Speculation}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={39-53},
+  keywords={Hardware;Security;Software;Complexity theory;Law;Androids},
+  doi={10.1109/SP40000.2020.00033}}
+
+@misc{intel-security,
+  author = {INTEL},
+  title = {Affected Processors: Guidance for Security Issues on Intel® Processors},
+  note = {\url{https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html#tab-blade-1-1} Accessed: January 2025}
+}
+
+@misc{OpenSSL,
+  title = {OpenSSL},
+  author = {},
+  note = {\url{https://openssl-library.org/} Accessed: January 2025}
+}
+
+@misc{spectre-v1-gadget,
+  title = {Spectre Mitigations in Microsoft's C/C++ Compiler},
+  author = {Paul Kocher},
+  year = {2018},
+  note = {\url{https://www.paulkocher.com/doc/MicrosoftCompilerSpectreMitigation.html} Accessed: January 2025}
+}
+
+@inproceedings{bohme2017directed,
+  title={Directed greybox fuzzing},
+  author={B{\"o}hme, Marcel and Pham, Van-Thuan and Nguyen, Manh-Dung and Roychoudhury, Abhik},
+  booktitle={Proceedings of the 2017 ACM SIGSAC conference on computer and communications security},
+  pages={2329--2344},
+  year={2017}
+}
+
+@inproceedings{babic2019fudge,
+  title={Fudge: fuzz driver generation at scale},
+  author={Babi{\'c}, Domagoj and Bucur, Stefan and Chen, Yaohui and Ivan{\v{c}}i{\'c}, Franjo and King, Tim and Kusano, Markus and Lemieux, Caroline and Szekeres, L{\'a}szl{\'o} and Wang, Wei},
+  booktitle={Proceedings of the 2019 27th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering},
+  pages={975--985},
+  year={2019}
 }

@@ -1,18 +1,327 @@
 \section{予備実験}
-\subsection{実験目的}
-RQ
-\subsection{実験準備}
-ファザーの初期シードの生成方法
-どの変数を記号化するか
-コンパイル時間は含まない
-検体ごとの埋め込む脆弱性の数は検体の規模に応じて、埋め込む
-\subsubsection{比較対象}
-\subsubsection{検体}
-\subsubsection{評価指標}
-ドライバも含めたサイズを記載
-\subsubsection{実験環境}
+本章では、提案手法の評価を目的として、以下のResearch Question（RQ）に答えるべく予備実験を行う。\par
+
+\begin{itemize}
+  \item (RQ1) 記号実行フェーズにおけるOrder制限はスケーラビリティを向上させるか
+  \item (RQ2) ファジングフェーズにおける不要な分岐予測ミスの抑制とスコアによるシードのスケジューリング戦略は効果的か
+  \item (RQ3) 解析全体を通して、既存手法\cite{wang2020kleespectre,oleksenko2020specfuzz}よりも効率的にGadgetを検出できるか
+\end{itemize}
+
+以降では、実験における比較対象、データセット、および環境について概説した後、提案手法の有効性を評価する。\par
+
+\subsection{比較対象}
+提案手法は、KLEESpectre\cite{wang2020kleespectre}およびSpecFuzz\cite{oleksenko2020specfuzz}と比較を行う。KLEESpectreは記号実行を拡張し、投機的なパスを探索することでSpectre Gadgetを検出するツールである。一方、SpecFuzzはファジングを拡張し、投機的実行のシミュレーション中に発生する境界外アクセスを検出することでGadgetを検出するツールである。これらはいずれも、Spectre Gadgetの静的解析および動的解析手法の代表的なツールであり、提案手法の実装のベースともなっているため、比較対象とした。
+なお、SpecTaint\cite{qi2021spectaint}はSpecFuzzと同様にファジングを用いる手法であり、テイント解析を活用することでSpecFuzzより少ない誤検出でGadgetを検出する。しかし、実装が公開されていないため、本研究では比較対象から除外した。
+
+\subsection{データセット}
+提案手法のSpectre Gadgetの検出能力を評価するにあたり、実世界のプログラムにおけるground truth(GT)が限られているため、定量的な比較が難しい。この問題に対処するため、既知のSpectre Gadgetを実世界のプログラムに埋め込むことで、評価用のデータセットを作成した。埋め込むGadgetは、Paul Kocherが作成したSpectre V1のサンプルコード\cite{spectre-v1-gadget}から選択した。提案手法の有効性を評価するために、選択したGadgetをベースに以下の3種類のGadgetを作成して埋め込んだ。\par
+
+\begin{itemize}
+  \item Type1: 1回の分岐予測ミスで悪用可能なGadget。
+  \item Type2: 2回のネストされた分岐予測ミスで悪用可能なGadget。
+  \item Type3: 3回のネストされた分岐予測ミスで悪用可能なGadget。
+\end{itemize}
+
+以降では、この3種類のGadgetをそれぞれType1, Type2, Type3と表記する。実際に埋め込んだGadgetを図\ref{gadget_example}に示す。
+
+\begin{figure}
+  \begin{minted}[linenos,escapeinside=@@,label=BCB,autogobble]{c}
+spec_idx = input(); // controllable via input 
+
+// Type1
+if (spec_idx < ARRAY1_SIZE) {
+  temp &= array2[array1[spec_idx] * 512];
+}
+// Type2
+if (spec_idx < ARRAY1_SIZE) {
+  if (spec_idx < ARRAY1_SIZE) {
+    temp &= array2[array1[spec_idx] * 512];
+  }
+}  
+// Type3
+if (spec_idx < ARRAY1_SIZE) {
+  if (spec_idx < ARRAY1_SIZE) {
+    if (spec_idx < ARRAY1_SIZE) {
+      temp &= array2[array1[spec_idx] * 512];
+    }
+  }
+} 
+\end{minted}
+  \caption{対象プログラムに埋め込んだ3種類のSpectre Gadget}
+  \label{gadget_example}
+\end{figure}
+
+実世界のプログラムには、広く利用されている暗号化ライブラリであるOpenSSL\cite{OpenSSL} v3.3.0から7つの暗号化関連プログラムを選択した。これらのプログラム内で制御フローに影響を与えない箇所にGadgetを埋め込み、それらを入力から制御できるようにするコードを追加した。そして、合計20個のGadgetを7つのプログラムに対して埋め込んだ。各検体ごとに埋め込むGadget数は検体のサイズに応じて決定し、1回の分岐予測ミスで悪用可能なGadget（Type1）と、複数のネストされた分岐予測ミスで悪用可能なGadget(Type2およびType3)のそれぞれが少なくとも各プログラムに1つ以上含まれるようにした。作成したデータセットの概要を表\ref{dataset}に示す。以降では、ここで埋め込んだGadgetをground truth(GT)として評価を行う。\par
+
+\begin{table}[ht]
+  \centering
+  \caption{データセットの概要}
+  \label{dataset}
+  \begin{tabular}{lcrr}
+    \toprule
+    \textbf{Program}  & \textbf{\shortstack{GT\\(Type1/Type2/Type3)}} & \textbf{Loc} & \textbf{Branch} \\
+    \midrule
+    AES (Advanced Encryption Standard)             & 2/1/0         & 1166     & 25                 \\
+    ARIA                                           & 2/1/1         & 736      & 18                 \\
+    CAST (Carlisle Adams and Stafford Tavares)     & 1/0/1         & 302      & 16                \\
+    DES (Data Encryption Standard)                 & 2/2/0         & 805      & 21               \\
+    IDEA (International Data Encryption Algorithm) & 1/1/0         & 216      & 11               \\
+    MD2 (Message Digest Algorithm 2)               & 1/1/0         & 230      & 11              \\
+    RC5 (Rivest Cipher 5)                          & 1/1/1         & 294      & 21              \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}
+    \footnotesize 
+  \item GT(Type1/Type2/Type3): 埋め込んだ各TypeのGadget数. Loc: テストドライバを含んだ検体の行数. Branch: 条件分岐命令の数
+  \end{tablenotes}
+\end{table}
+
+
+\subsection{実験環境及び構成}
+実験は以下の環境で行った。\par
+
+\begin{itemize}
+  \item OS: Ubuntu 18.04.6 LTS
+  \item CPU: Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz 
+  \item RAM: 128GB
+  \item Clang: 7.0.1(SpecFuzz), 6.0.0(KLEESpectre、提案手法)
+\end{itemize}
+
+SpecFuzzと提案手法およびKLEESpectreでは、必要とするClangのバージョンが異なるため、それぞれ対応するコンパイラを使用した。また、LLVM passでの計装がコンパイル時の最適化により無効化される可能性を排除するため、全ての検体のビルド時に最適化オプション -O0 を指定した。 提案手法のOrder値は1に設定して実験を行った。つまり、記号実行フェーズではType1のGadgetを検出し、ファジングフェーズではType2及びType3のGadgetを検出することが目的となる。また、投機ウィンドウのサイズは200に設定した。ここで、SpecFuzzはLLVM MIRレベルで投機ウィンドウを計測するのに対し、提案手法およびKLEESpectreではLLVM IRレベルで投機ウィンドウを計測することに注意されたい。埋め込んだGadgetはすべて、分岐予測ミスから境界外アクセスまでの命令数が少ないため、この違いによって特定のGadgetが一方のツールだけで見逃されることはない。各検体に対するテストドライバはそれぞれ自作したものを使用した。\par
+
 \subsection{実験結果}
-\subsubsection{解析全体の評価}
 \subsubsection{記号実行フェーズの評価}
+RQ1に回答するため、提案手法の記号実行フェーズを評価した。具体的には、提案手法の記号実行フェーズとKLEESpectreを用いてデータセットを解析し、探索された投機的状態数、解析時間、メモリ使用量を比較することで、Order制限が記号実行のスケーラビリティ向上に有効であるかを検証した。各プログラムの入力を記号変数として設定し、KLEEのオプションを使用して最大メモリ使用量を8GBに制限して実験を行った。
+表\ref{klee_result}と表\ref{myklee_result}に、提案手法の記号実行フェーズとKLEESpectreによるデータセットの解析結果を示す。表\ref{myklee_comparison}では、KLEESpectreに対する提案手法の記号実行フェーズにおける投機的状態数、解析時間、メモリ使用量の割合を示している。
+
+表\ref{klee_result},\ref{myklee_result}に示す通り、Order制限によりネストされた分岐予測ミスが1回に制限されているため、提案手法の記号実行フェーズではType1のGadgetのみが検出されていることがわかる。また、KLEESpectreおよび提案手法のいずれもいくつかのGadgetを見逃している。この原因として、記号化する変数に漏れがあった可能性や、解析時に指定したKLEEのオプションの影響が考えられる。
+さらに、KLEESpectreでIDEAを解析した際、最大メモリ使用量の上限である8GBに達したため、状態のフォークが抑制されたことが確認された。これにより、通常の状態数が提案手法の記号実行フェーズの結果と比較して大幅に減少している。
+
+表\ref{myklee_comparison}に示す通り、全ての検体でOrder制限により解析時間が削減されたことが確認された。特に、IDEA、MD2、RC5においては、KLEESpectreと比較してそれぞれ解析時間が1時間以上短縮された。また、最大メモリ使用量についても、AESを除く全ての検体で削減が見られた。特に、IDEA、MD2、RC5では最大メモリ使用量が約70\%以上削減された。これらの差異は、Order制限による投機的状態数の削減と関連していると考えられる。IDEA、MD2、RC5では、KLEESpectreと比較して探索された投機的状態数が約1\%にまで抑制された。一方、他の検体では投機的状態数が十数\%程度までしか抑制されておらず、この違いが解析時間および最大メモリ使用量の削減度合いに影響を与えたと考える。
+KLEESpectreでは、投機的状態が投機ウィンドウに達した時点で削除される最適化が行われている。その結果、通常の状態とは異なり、解析が終了するまで記号実行エンジンによって投機的状態が保持されることはない。このため、AES、ARIA、CAST、DESなどの検体では他の検体と比較して、投機的状態数が大幅に削減されなかったため、解析時間及び最大メモリ使用量に大きな影響を与えなかったと考えられる。以上から、Order制限により投機的状態数が大幅に削減される場合、記号実行のスケーラビリティが大きく向上すると思われる。特に、ループ構造を多く含む検体では投機的状態数が増加しやすく、そのような検体に対しては高い効果を発揮すると考えられる。\par
+
+表\ref{myfuzz_comparison}は、全ての分岐方向に対する提案手法の記号実行フェーズで特定したRemovable BranchとTarget Branchが占める割合を示している。記号実行フェーズでRemovable Directionと判断された分岐方向は平均して全体の30\%程度であった。また、Target Directionと判断された分岐方向は平均して全体の65\%程度であった。これらに対する分岐予測ミスの抑制やスコアリングの効果は、次のファジングフェーズの評価で行う。\par
+
+\begin{table}[ht]
+  \centering
+  \caption{KLEESpectreによる解析結果}
+  \label{klee_result}
+  \begin{tabular}{lccrrcr}
+    \toprule
+    \textbf{Program}  & \textbf{GT} & \textbf{TP} & \textbf{States} & \textbf{\shortstack{Speculative\\States}}& \textbf{\shortstack{Analysis Time\\(h:m:s)}} & \textbf{\shortstack{Max Memory Usage\\(MB)}}\\
+    \midrule
+    AES   & 2/1/0     & 1/1/0   &  94    &  378        & 0:19:37   &  148.52  \\
+    ARIA  & 2/1/1     & 2/1/1   &  13    &  5221       & 0:1:39    &  149.74  \\
+    CAST  & 1/0/1     & 1/0/1   &  8127  &  507459     & 0:1:42    &  83.66   \\
+    DES   & 2/2/0     & 2/2/0   &  560	 &  21079      & 5:38:12   &  4783.49 \\
+    IDEA  & 1/1/0     & 1/1/0   &  231   &  66967553   & 2:54:57   &  8580.13 \\
+    MD2   & 1/1/0     & 1/1/0   &  518   &  13955580   & 3:39:30   &  621.91  \\
+    RC5   & 1/1/1     & 1/0/1   &  41468 &	40635442   & 1:32:43   &  722.34	\\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}
+    \footnotesize 
+    \item GT: 埋め込んだGadget数. TP: GTの中で検出されたGadget数. States: 通常のパスにおける探索された状態数. Speculative States: 投機的なパスにおける探索された状態数
+  \end{tablenotes}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{提案手法の記号実行フェーズによる解析結果}
+  \label{myklee_result}
+  \begin{tabular}{lccrrcr}
+    \toprule
+    \textbf{Program}  & \textbf{GT} & \textbf{TP} & \textbf{States} & \textbf{\shortstack{Speculative\\States}}& \textbf{\shortstack{Analysis Time\\(h:m:s)}} & \textbf{\shortstack{Max Memory Usage\\(MB)}}\\
+    \midrule
+    AES   & 2/1/0     & 1/0/0   &  91    &  202        & 0:19:33   &  149.19  \\
+    ARIA  & 2/1/1     & 2/0/0   &  13    &  533        & 0:1:08    &  145.49  \\
+    CAST  & 1/0/1     & 1/0/0   &  8127  &  48611      & 0:1:01    &  67.89   \\
+    DES   & 2/2/0     & 2/0/0   &  560	 &  3155       & 5:27:30   &  4782.86 \\
+    IDEA  & 1/1/0     & 1/0/0   &  37740 &  696804     & 0:43:20	 &  431.29  \\
+    MD2   & 1/1/0     & 1/0/0   &  466   &  28318	     & 0:20:08   &  199.55  \\
+    RC5   & 1/1/1     & 1/0/0   &  41468 &	479269     & 0:3:43    &  89.90 	\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{KLEESpectreに対する提案手法の記号実行フェーズの解析結果の割合}
+  \label{myklee_comparison}
+  \begin{tabular}{lccc}
+    \toprule
+  \textbf{Program} & \textbf{\shortstack{Speculative\\States (\%)}} & \textbf{Analysis Time (\%)} & \textbf{\shortstack{Max Memory\\Usage (\%)}} \\
+    \midrule
+    AES   &  53.45    & 99.66  &  100.45  \\
+    ARIA  &  10.21    & 68.69  &  97.16  \\
+    CAST  &  9.58     & 59.80  &  81.15   \\
+    DES   &  14.97    & 96.84  &  99.99 \\
+    IDEA  &  1.04     & 24.77	 &  5.03  \\
+    MD2   &  0.20	    & 9.17   &  32.09  \\
+    RC5   &	 1.28     & 4.01   &  14.45 	\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsubsection{ファジングフェーズの評価}
-\subsection{議論}
+RQ2に回答するため、提案手法のファジングフェーズを評価した。具体的には、提案手法のファジングフェーズとSpecFuzzを用いてデータセットを解析し、Type2およびType3のGadgetの検出率やスループットを比較することで、不要な分岐予測ミスの抑制とスコアによるスケジューリング戦略の効果を検証した。
+ファジングはシングルスレッドで実行し、各検体に対して30分×4セット、合計120分間実施した結果を比較した。初期シードには、検体の入力が必要とする最低サイズを満たす単一のテキストファイルを用いた。また、提案手法のファジングフェーズで計装に使用するJSONファイルは、記号実行フェーズの評価時に得られたJSONファイルを利用した。表\ref{specfuzz_result},\ref{myfuzz_result}にSpecFuzzと提案手法のファジングフェーズによるデータセットの解析結果を示す。また、分岐予測ミスの抑制とスコアによるシードのスケジューリング戦略の効果を評価するために、これらの結果と検体ごとのRemovable BranchとTarget Branchの割合をまとめたものを表\ref{myfuzz_comparison}に示す。\par
+
+表\ref{myfuzz_comparison}から、Recallについては一部の検体で提案手法がSpecFuzzをわずかに上回る結果が得られたが、Type2およびType3のRecallに関しては、提案手法がわずかに劣る傾向が確認された。しかし、この差はファジングという解析手法固有のランダム性に起因するものであり、許容範囲内の誤差と考えられる。したがって、SpecFuzzと提案手法のファジングフェーズにはGadgetの検出能力に実質的な差はないと考えられる。\par
+
+ファジングのスループットに関しては、すべての検体で提案手法が低下しており、平均して約54\%の低下が見られた。また、Removable Directionの割合とスループットの間には明確な正の相関関係は確認されなかった。スループットが低下した理由として、まずSpecFuzzと提案手法のファジングフェーズの投機ウィンドウの計測方法の違いが考えられる。SpecFuzzはLLVM MIRレベルで投機ウィンドウを計測するのに対し、提案手法のファジングフェーズではKLEESpectreと同じ基準を用いるため、LLVM IRレベルで投機ウィンドウを計測している。この違いにより、同じ投機ウィンドウサイズを設定しても、SpecFuzzの方が早く上限に達してシミュレーションを終了する。このため、SpecFuzzのスループットがより高く出力されたと考えられる。
+
+また、表\ref{myfuzz_comparison}からわかる通り、各検体で平均して全体の32\%程度の分岐方向の分岐予測ミスしか抑制されていない。加えて、分岐予測ミスの抑制が行われるのは、対象の分岐からシミュレーションが開始される場合に限られる。すでに先行する分岐によってシミュレーションが開始されている場合、ネストされた投機的状態を探索するため、現在の分岐も必ず重ねてシミュレーションが行われる。以上の理由から、分岐予測ミスの抑制が適用される場面は限定的であり、提案手法の分岐予測ミスの抑制やスコア計測を行うための計装に伴う追加の実行コストが、分岐予測ミスの抑制による効果を上回ったことがスループット低下の原因の一つと考えられる。
+
+次に、スコアを用いたシードのスケジューリング戦略について評価する。提案手法のRecall(Type2,3)はSpecFuzzと比較して向上しなかった。この原因として、ターゲット状態の多さが考えられる。ターゲット状態が多い場合、必然的にTarget Directionも多くなる。実際、表\ref{myfuzz_result}に示すように、Target Directionの割合は全体的に高く、平均で約65\%を占めている。このような状況では、どのようなテストケースを与えてもスコアが高くなりやすく、有効なテストケースと無効なテストケースを区別することが難しくなる。その結果、特定の状態にテストケースを効果的に誘導することが困難になったと考えられる。今回の実験では、Order値を1に設定したことがターゲット状態は増加に繋がったと考えられる。この設定では、ある条件分岐命令から投機ウィンドウのサイズ（200命令）以内に別の分岐命令が存在する場合、それがターゲット状態として扱われる。このため、表\ref{dataset}に示す各検体の条件分岐命令数と行数を考慮すると、ターゲット状態の数が非常に多くなってしまうことが予想される。このようにターゲット状態が多い状況では、スコアによる効果的な誘導が難しくなり、提案手法のRecall(Type2,3)が向上しなかったと考えられる。\par
+
+
+\begin{table}[ht]
+  \centering
+  \caption{SpecFuzzによる解析結果}
+  \label{specfuzz_result}
+  \begin{tabular}{lcccccccc}
+    \toprule
+    \textbf{Program}  & \textbf{GT} & \textbf{30min} & \textbf{60min} & \textbf{90min} & \textbf{120min} & \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} & \textbf{Throughput}\\
+    \midrule
+    AES   & 2/1/0     & 1/1/0   &  1/1/0 &  1/1/0      & 1/1/0     &  0.67    & 1.00 & 508 \\
+    ARIA  & 2/1/1     & 2/1/1   &  2/1/1 &  2/1/1      & 2/1/1     &  1.00    & 1.00 & 428 \\
+    CAST  & 1/0/1     & 1/0/0   &  1/0/0 &  1/0/0      & 1/0/0     &  0.50    & 0    & 496	\\
+    DES   & 2/2/0     & 0/1/0	  &  1/1/0 &  1/1/0      & 1/1/0     &  0.50    & 0.50 & 496  \\
+    IDEA  & 1/1/0     & 1/1/0   &  1/1/0 &  1/1/0      & 1/1/0	   &  1.00    & 1.00 & 380  \\
+    MD2   & 1/1/0     & 0/0/0   &  1/1/0 &  1/1/0	     & 1/1/0     &  1.00    & 1.00 & 471  \\
+    RC5   & 1/1/1     & 0/1/1   &  0/1/1 &	0/1/1      & 0/1/1     &  0.67 	  & 1.00 & 544	\\
+    \bottomrule
+  \end{tabular}
+   \begin{tablenotes}
+    \footnotesize 
+  \item Recall: GTのうちTPの割合. Recall(Type2,3): GTをType2とType3のGadgetに限定した場合のTPの割合. Throughput: ファザーが1秒間に実行したテストケースの平均回数.
+  \end{tablenotes}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{提案手法のファジングフェーズによる解析結果}
+  \label{myfuzz_result}
+  \begin{tabular}{lcccccccc}
+    \toprule
+    \textbf{Program}  & \textbf{GT} & \textbf{30min} & \textbf{60min} & \textbf{90min} & \textbf{120min} & \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} & \textbf{Throughput}\\
+    \midrule
+    AES   & 2/1/0     & 1/1/0   &  1/1/0 &  1/1/0      & 1/1/0     &  0.67    & 1.00    & 227 \\
+    ARIA  & 2/1/1     & 2/1/0   &  2/1/0 &  2/1/0      & 2/1/0     &  0.75    & 0.50 & 278 \\
+    CAST  & 1/0/1     & 1/0/0   &  1/0/0 &  1/0/0      & 1/0/0     &  0.50    & 0    & 307	\\
+    DES   & 2/2/0     & 2/1/0	  &  2/1/0 &  2/1/0      & 2/1/0     &  0.75    & 0.50 & 295  \\
+    IDEA  & 1/1/0     & 1/1/0   &  1/1/0 &  1/1/0      & 1/1/0	   &  1.00    & 1.00 & 182  \\
+    MD2   & 1/1/0     & 1/1/0	  &  1/1/0 &  1/1/0	     & 1/1/0     &  1.00    & 1.00 & 188  \\
+    RC5   & 1/1/1     & 1/1/1   &  1/1/1 &	1/1/1      & 1/1/1     &  1.00 	  & 1.00 & 308	\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{提案手法のファジングフェーズとSpecFuzzの解析結果の比較}
+  \label{myfuzz_comparison}
+  \begin{tabular}{lcc|cc|cc|c}
+    \hline \multirow{2}{*}{\textbf{\shortstack{Program}}} & \multirow{2}{*}{\textbf{\shortstack{Removable\\Directions(\%)}}} & \multirow{2}{*}{\textbf{\shortstack{Target\\Directions(\%)}}}  &
+    \multicolumn{2}{c|}{\textbf{SpecFuzz}} &  
+    \multicolumn{2}{c|}{\textbf{提案手法}} &  \multirow{2}{*}{\textbf{\shortstack{Throughput\\(\%)}}} \\
+    \cline{4-7}
+    % \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+    & & & \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} & 
+    \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} \\
+    % \midrule
+    \hline
+    AES   & 38.00 & 36.00 & 0.67 & 1.00 & 0.67 & 1.00 & 44.69 \\
+    ARIA  & 47.22 & 68.08 & 1.00 & 1.00 & 0.75 & 0.50 & 64.95 \\
+    CAST  & 28.13 & 71.19 & 0.50 & 0    & 0.50 & 0    & 61.90 \\
+    DES   & 35.71 & 60.71 & 0.50 & 0.50 & 0.75 & 0.50 & 59.48 \\
+    IDEA  & 40.91 & 61.36 & 1.00 & 1.00 & 1.00 & 1.00 & 47.89 \\
+    MD2   & 9.09  & 72.27 & 1.00 & 1.00 & 1.00 & 1.00 & 39.92 \\
+    RC5   & 23.81 & 84.52 & 0.67 & 1.00 & 1.00 & 1.00 & 56.62 \\
+    % \bottomrule
+    \hline
+  \end{tabular}
+    \begin{tablenotes}
+      \footnotesize 
+    \item Removable Directions (\%): 全ての分岐方向に対するRemovable Directionの割合. Target Directions (\%): 分岐予測ミスを含む全ての分岐方向に対するTarget Directionの割合. Throughput (\%): SpecFuzzのThroughputに対する提案手法のファジングフェーズのThroughputの割合.
+    \end{tablenotes}
+\end{table}
+
+以上の結果を踏まえ、ターゲット状態への効率的な誘導を実現するために、以下の2つの方法が考えられる。
+1つ目は、Order値を増加させて解析を行う方法である。今回の実験ではOrder値を1に設定したため、ターゲット状態が多くなったが、Order値を上げることでファジングフェーズで探索するターゲット状態数を減らし、スコアによる評価がより効果的に機能すると考えられる。ただし、この方法では、Order値を増加させることで記号実行フェーズにおける投機的状態の探索が増加し、記号実行のスケーラビリティが低下する可能性がある。したがって、検体ごとに記号実行フェーズとファジングフェーズの効果を最大限に引き出す最適なOrder値を設定する必要があると考える。
+
+2つ目は、より詳細なスコアリング手法を導入する方法である。本研究で提案した手法では、テストケースが通過したTarget Directionの種類数が多いほどスコアが高くなるという単純なスコアリング手法を採用している。そのため、この手法にはテストケースが通過した分岐方向の順序や複数のターゲット状態を区別する要素が含まれていない。その結果、ターゲット状態が多い場合、どのようなテストケースでも一定のスコアを獲得しやすくなり、テストケースの有効性を細かく評価できていなかったと考えられる。分岐方向の通過順序やターゲット状態ごとのスコアを導入することで、テストケースの有効性をより詳細に評価できる可能性がある。しかし、詳細なスコアリングを行うためには、より複雑な計装が必要となるため、その分実行時のオーバーヘッドが増加し、ファジングのスループットが低下する可能性がある。このため、実行時オーバーヘッドの増加を最小限に抑えつつ、効率的にテストケースを誘導できる手法を検討する必要があると考える。\par
+
+
+\subsubsection{提案手法全体の評価}
+RQ3に答えるため、提案手法全体をKLEESpectreおよびSpecFuzzと比較しその性能を評価した。本研究では、各ツールの効率性を図る指標として、単位時間あたりのGadget検出数およびメモリ使用量あたりのGadget検出数を使用する。つまり、短い解析時間または少ないメモリ使用量で多くのGadgetを検出できたツールを効率的であると評価する。
+
+使用したデータは、RQ1およびRQ2で行った実験の結果を利用したものである。具体的には、ファジングによる解析では120分間の実行で検出されたGadgetを基に、記号実行による解析では解析が終了するまでに要した時間を基に、それぞれ単位時間あたりのGadget検出数を計算した。一方、提案手法では記号実行フェーズの解析に要した時間と、ファジングフェーズでの解析時間(120分)の合計を全体の解析時間とし、単位時間あたりに検出されたGadget数を計算した。メモリ使用量あたりのGadget検出数は、各解析ツールによる解析が終了するまでに必要とした最大メモリ使用量を用いて計算を行った。\par
+
+\begin{table}[htbp]
+  \centering
+  \caption{提案手法とその他の解析ツールとの比較}
+  \label{all_comparison}
+  \begin{tabular}{l|cc|cc|cc}
+    \hline
+    \multirow{2}{*}{\textbf{Program}} & 
+    \multicolumn{2}{c|}{\textbf{KLEESpectre}} & 
+    \multicolumn{2}{c|}{\textbf{SpecFuzz}} & 
+    \multicolumn{2}{c}{\textbf{提案手法}} \\
+    \cline{2-7}
+    & \textbf{Gadget/m} & \textbf{Gadget/MB} & 
+    \textbf{Gadget/m} &  \textbf{Gadget/MB} & 
+    \textbf{Gadget/m} &  \textbf{Gadget/MB} \\
+    \hline
+    AES   & 0.103 & 0.0135  & 0.017 & 0.1362 & 0.022 & 0.0201 \\
+    ARIA  & 2.878 & 0.0277  & 0.033 & 0.2712 & 0.025 & 0.0206 \\
+    CAST  & 1.408 & 0.0239  & 0.008 & 0.0669 & 0.008 & 0.0147 \\
+    DES   & 0.012 & 0.0008  & 0.017 & 0.1350 & 0.007 & 0.0006 \\
+    IDEA  & 0.011 & 0.0002  & 0.017 & 0.1359 & 0.012 & 0.0046 \\
+    MD2   & 0.009 & 0.0032  & 0.017 & 0.1221 & 0.014 & 0.0100 \\
+    RC5   & 0.022 & 0.0028  & 0.017 & 0.1359 & 0.024 & 0.0334 \\
+    \hline
+  \end{tabular}
+    \begin{tablenotes}
+      \footnotesize 
+    \item Gadget/m: 1分間あたりに検出したGadget数. Gadget/MB: メモリ使用量(MB)あたりに検出したGadget数.
+    \end{tablenotes}
+\end{table}
+
+% \begin{table}[htbp]
+%   \centering
+%   \caption{提案手法とその他の解析ツールとの比較}
+%   \label{all_comparison}
+%   \begin{tabular}{l|cc|cc|cc}
+%     \hline
+%     \multirow{2}{*}{\textbf{Program}} & 
+%     \multicolumn{2}{c|}{\textbf{KLEESpectre}} & 
+%     \multicolumn{2}{c|}{\textbf{SpecFuzz}} & 
+%     \multicolumn{2}{c}{\textbf{提案手法}} \\
+%     \cline{2-7}
+%     & \textbf{Gadget/m} & \small{\shortstack{\textbf{Max Memory}\\\textbf{Usage (KB)}}} & 
+%     \textbf{Gadget/m} &  \small{\shortstack{\textbf{Max Memory}\\\textbf{Usage (KB)}}} & 
+%     \textbf{Gadget/m} &  \small{\shortstack{\textbf{Max Memory}\\\textbf{Usage (KB)}}} \\
+%     \hline
+%     AES   & 0.103 & 152088  & 0.017 & 15070 & 0.022 & 152768 \\
+%     ARIA  & 2.878 & 153332  & 0.033 & 16775 & 0.025 & 148980 \\
+%     CAST  & 1.408 & 85664   & 0.008 & 15073 & 0.008 & 69520    \\
+%     DES   & 0.012 & 4898296 & 0.017 & 15161 & 0.007 & 4897648 \\
+%     IDEA  & 0.011 & 8786052 & 0.017 & 15028 & 0.012 & 441644 \\
+%     MD2   & 0.009 & 636832  & 0.017 & 15310 & 0.014 & 204344 \\
+%     RC5   & 0.022 & 739676  & 0.017 & 15108 & 0.024 & 92056 \\
+%     \hline
+%   \end{tabular}
+%     \begin{tablenotes}
+%       \footnotesize 
+%     \item Gadget/m: 1分間あたりに検出したGadget数. Gadget/KB: メモリ使用量(KB)あたりに検出したGadget数.
+%     \end{tablenotes}
+% \end{table}
+
+表\ref{all_comparison}に、各解析ツールについて検体ごとの単位時間あたりのGadget検出数およびメモリ使用量あたりのGadget検出数を示す。
+表\ref{all_comparison}が示す通り、提案手法はRC5の検体において、KLEESpectreおよびSpecFuzzを上回る単位時間あたりのGadget検出数を記録した。しかし、それ以外の検体では提案手法のGadget検出数が他のツールより低下している。RC5において提案手法がより優れた値を記録した理由として、Order制限を加えた記号実行によってKLEESpectreよりも大幅に解析時間が短縮したことと、Type1のGadgetが特定の条件下でのみ到達可能なパスに存在しており、SpecFuzzでは見逃されたことが挙げられる。\par
+メモリ使用量あたりのGadget検出数では全ての検体において、SpecFuzzが最も優れていた。しかし、提案手法は4つの検体でKLEESpectreよりもメモリ使用量あたりのGadget検出数が多かった。この理由として、Order制限により記号実行のメモリ使用量が抑えられたことと、ファジングによる解析が記号実行よりも少ないメモリ使用量で一部のGadgetを検出できていたことが挙げられる。提案手法では、SpecFuzzほどメモリ効率が良くGadgetを検出できなかったものの、最大メモリ使用量はいずれの検体においても5GB以下に収まった。また、KLEESpectreと比較すると、平均して最大メモリ使用量が約61\%削減された。このことから、提案手法はメモリリソースが限られた環境でも多くの検体を十分に解析可能であると考える。\par
+
+以上の結果から、Order制限により投機的状態数が大幅に抑制されるとともに、Type1のGadgetが特定の条件下でのみ到達可能なパスに多く含まれる検体においては、提案手法がスケーラビリティと精度の両立を実現できる可能性があると考える。\par

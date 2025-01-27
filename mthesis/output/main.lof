@@ -1,25 +1,32 @@
 \addvspace {10\jsc@mpt }
 \addvspace {10\jsc@mpt }
 \addvspace {10\jsc@mpt }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces 分岐予測による投機実行}}{3}{figure.caption.5}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces 仮想アドレスによるキャッシュの参照}}{4}{figure.caption.6}%
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Prime+Probeの概要}}{5}{figure.caption.7}%
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Spectre-PHT 脆弱性を含むコード片}}{6}{figure.caption.8}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces 分岐予測器のトレーニング}}{7}{figure.caption.9}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Spectre-PHT 脆弱性を含むコード片に対し、lfence命令による防御策を適用した例}}{8}{figure.caption.10}%
-\contentsline {figure}{\numberline {2.7}{\ignorespaces SLH適用前のSpectre Gadget}}{9}{figure.caption.11}%
-\contentsline {figure}{\numberline {2.8}{\ignorespaces SLH適用後のコード辺}}{9}{figure.caption.12}%
-\contentsline {figure}{\numberline {2.9}{\ignorespaces KLEESpectreにおけるコード例}}{11}{figure.caption.13}%
-\contentsline {figure}{\numberline {2.10}{\ignorespaces 投機的なパスを含んだ制御フローグラフ}}{12}{figure.caption.14}%
-\contentsline {figure}{\numberline {2.11}{\ignorespaces SpecFuzzによる計装前と計装後の制御フローグラフの概略}}{13}{figure.caption.15}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces 分岐予測による投機実行}}{4}{figure.caption.5}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces 仮想アドレスによるキャッシュの参照}}{5}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Prime+Probeの概要}}{6}{figure.caption.7}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Spectre-PHT 脆弱性を含むコード片}}{7}{figure.caption.8}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces 分岐予測器のトレーニング}}{8}{figure.caption.9}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Spectre Gadgetに対し、lfence命令による防御策を適用した例}}{9}{figure.caption.10}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces SLH適用前のSpectre Gadget}}{10}{figure.caption.11}%
+\contentsline {figure}{\numberline {2.8}{\ignorespaces SLH適用後のコード辺}}{10}{figure.caption.12}%
+\contentsline {figure}{\numberline {2.9}{\ignorespaces KLEESpectreにおけるコード例}}{12}{figure.caption.13}%
+\contentsline {figure}{\numberline {2.10}{\ignorespaces 投機的なパスを含んだ制御フローグラフ}}{13}{figure.caption.14}%
+\contentsline {figure}{\numberline {2.11}{\ignorespaces SpecFuzzによる計装前と計装後の制御フローグラフの概略}}{14}{figure.caption.15}%
 \addvspace {10\jsc@mpt }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces 記号実行におけるパス爆発}}{15}{figure.caption.16}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces 記号実行におけるストア状態の爆発}}{16}{figure.caption.17}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Motivating Example}}{18}{figure.caption.18}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces 記号実行におけるパス爆発}}{16}{figure.caption.16}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces 記号実行におけるストア状態の爆発}}{17}{figure.caption.17}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Motivating Example}}{19}{figure.caption.18}%
 \addvspace {10\jsc@mpt }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces ネストされた分岐予測ミスの制限}}{20}{figure.caption.20}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Order1の記号実行フェーズの解析}}{21}{figure.caption.20}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces ファジングフェーズにおける分岐予測ミスのシミュレートが不要な例}}{22}{figure.caption.21}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Removable Directionを特定した結果}}{24}{figure.caption.23}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Target Directionを取得した結果}}{24}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces 計装によるRemovable Directionの分岐予測ミスの抑制}}{25}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces スコアを用いたシードのスケジューリング戦略}}{26}{figure.caption.26}%
 \addvspace {10\jsc@mpt }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces 提案手法の全体像}}{27}{figure.caption.27}%
 \addvspace {10\jsc@mpt }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces 対象プログラムに埋め込んだ3種類のSpectre Gadget}}{31}{figure.caption.28}%
 \addvspace {10\jsc@mpt }
 \addvspace {10\jsc@mpt }
 \addvspace {10\jsc@mpt }
