@@ -159,9 +159,34 @@ KLEESpectreでは、投機的状態が投機ウィンドウに達した時点で
     IDEA  &  1.04     & 24.77	 &  5.03  \\
     MD2   &  0.20	    & 9.17   &  32.09  \\
     RC5   &	 1.28     & 4.01   &  14.45 	\\
+    \midrule
+    AVERAGE &	12.96   & 51.85  &  61.47  \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+
+\begin{table}[ht]
+  \centering
+  \caption{slide}
+  \label{slide}
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Program} & \textbf{\shortstack{GT}} & \textbf{TP(KLEESpectre)} & \textbf{\shortstack{TP(提案手法)}} \\
+    \midrule
+    AES   &  2/1/0    & 1/1/0  &  1/0/0  \\
+    ARIA  &  2/1/1    & 2/1/1  &  2/0/0  \\
+    CAST  &  1/0/1    & 1/0/1  &  1/0/0  \\
+    DES   &  2/2/0    & 2/2/0  &  2/0/0  \\
+    IDEA  &  1/1/0    & 1/1/0	 &  1/0/0  \\
+    MD2   &  1/1/0	  & 1/1/0  &  1/0/0  \\
+    RC5   &	 1/1/1    & 1/0/1  &  1/0/0  \\
+    \midrule
+    TOTAL &	 10/7/3   & 9/6/3  &  9/0/0  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 
 \subsubsection{ファジングフェーズの評価}
 RQ2に回答するため、提案手法のファジングフェーズを評価した。具体的には、提案手法のファジングフェーズとSpecFuzzを用いてデータセットを解析し、Type2およびType3のGadgetの検出率やスループットを比較することで、不要な分岐予測ミスの抑制とスコアによるスケジューリング戦略の効果を検証した。
@@ -255,6 +280,54 @@ RQ2に回答するため、提案手法のファジングフェーズを評価�
 2つ目は、より詳細なスコアリング手法を導入する方法である。本研究で提案した手法では、テストケースが通過したTarget Directionの種類数が多いほどスコアが高くなるという単純なスコアリング手法を採用している。そのため、この手法にはテストケースが通過した分岐方向の順序や複数のターゲット状態を区別する要素が含まれていない。その結果、ターゲット状態が多い場合、どのようなテストケースでも一定のスコアを獲得しやすくなり、テストケースの有効性を細かく評価できていなかったと考えられる。分岐方向の通過順序やターゲット状態ごとのスコアを導入することで、テストケースの有効性をより詳細に評価できる可能性がある。しかし、詳細なスコアリングを行うためには、より複雑な計装が必要となるため、その分実行時のオーバーヘッドが増加し、ファジングのスループットが低下する可能性がある。このため、実行時オーバーヘッドの増加を最小限に抑えつつ、効率的にテストケースを誘導できる手法を検討する必要があると考える。\par
 
 
+\begin{table}[ht]
+  \centering
+  \caption{slide2}
+  \label{slide2}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Program}  & \textbf{Removable Direction(\%)} & \textbf{Throughput(\%)}\\
+    \midrule
+    AES   & 38.00     & 44.69   \\
+    ARIA  & 47.22     & 64.95   \\
+    CAST  & 28.13     & 61.90   \\
+    DES   & 35.71     & 59.48	  \\
+    IDEA  & 40.91     & 47.89   \\
+    MD2   & 9.09      & 39.92   \\
+    RC5   & 23.81     & 56.62   \\
+    \midrule
+    AVERAGE & 31.83   & 53.63   \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{slide3}
+  \label{slide3}
+  \begin{tabular}{lc|cc|cc}
+    \hline
+    \multirow{2}{*}{\textbf{\shortstack{Program}}} & 
+    \multirow{2}{*}{\textbf{\shortstack{Target\\Directions(\%)}}}  &
+    \multicolumn{2}{c|}{\textbf{SpecFuzz}} &  
+    \multicolumn{2}{c}{\textbf{提案手法}} \\
+    \cline{3-6}
+    & & \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} & 
+    \textbf{Recall} & \textbf{\shortstack{Recall\\(Type2,3)}} \\
+    \hline
+    AES   & 36.00 & 0.67 & 1.00 & 0.67 & 1.00 \\
+    ARIA  & 68.08 & 1.00 & 1.00 & 0.75 & 0.50 \\
+    CAST  & 71.19 & 0.50 & 0    & 0.50 & 0    \\
+    DES   & 60.71 & 0.50 & 0.50 & 0.75 & 0.50 \\
+    IDEA  & 61.36 & 1.00 & 1.00 & 1.00 & 1.00 \\
+    MD2   & 72.27 & 1.00 & 1.00 & 1.00 & 1.00 \\
+    RC5   & 84.52 & 0.67 & 1.00 & 1.00 & 1.00 \\
+    \midrule
+    AVERAGE & 64.88 & 0.76 & 0.79 & 0.81 & 0.71 \\
+    \hline
+  \end{tabular}
+\end{table}
+
 \subsubsection{提案手法全体の評価}
 RQ3に答えるため、提案手法全体をKLEESpectreおよびSpecFuzzと比較しその性能を評価した。本研究では、各ツールの効率性を図る指標として、単位時間あたりのGadget検出数およびメモリ使用量あたりのGadget検出数を使用する。つまり、短い解析時間または少ないメモリ使用量で多くのGadgetを検出できたツールを効率的であると評価する。
 
@@ -325,3 +398,54 @@ RQ3に答えるため、提案手法全体をKLEESpectreおよびSpecFuzzと比�
 メモリ使用量あたりのGadget検出数では全ての検体において、SpecFuzzが最も優れていた。しかし、提案手法は4つの検体でKLEESpectreよりもメモリ使用量あたりのGadget検出数が多かった。この理由として、Order制限により記号実行のメモリ使用量が抑えられたことと、ファジングによる解析が記号実行よりも少ないメモリ使用量で一部のGadgetを検出できていたことが挙げられる。提案手法では、SpecFuzzほどメモリ効率が良くGadgetを検出できなかったものの、最大メモリ使用量はいずれの検体においても5GB以下に収まった。また、KLEESpectreと比較すると、平均して最大メモリ使用量が約61\%削減された。このことから、提案手法はメモリリソースが限られた環境でも多くの検体を十分に解析可能であると考える。\par
 
 以上の結果から、Order制限により投機的状態数が大幅に抑制されるとともに、Type1のGadgetが特定の条件下でのみ到達可能なパスに多く含まれる検体においては、提案手法がスケーラビリティと精度の両立を実現できる可能性があると考える。\par
+
+\begin{table}[ht]
+  \centering
+  \caption{slide2}
+  \label{slide2}
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Program}  & \textbf{\shortstack{KLEESpectre\\(Gadget/m)}} & \textbf{\shortstack{SpecFuzz\\(Gadget/m)}} &  \textbf{\shortstack{提案手法\\(Gadget/m)}} \\
+    \midrule
+    AES   & 0.103     & 0.017  & 0.022 \\
+    ARIA  & 2.878     & 0.033  & 0.025 \\
+    CAST  & 1.408     & 0.008  & 0.008 \\
+    DES   & 0.012     & 0.017	 & 0.007 \\
+    IDEA  & 0.011     & 0.017  & 0.012 \\
+    MD2   & 0.009     & 0.017  & 0.014 \\
+    RC5   & 0.022     & 0.017  & 0.024 \\
+    \midrule
+    AVERAGE & 0.63   & 0.018 & 0.016 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{提案手法とその他の解析ツールとの比較}
+  \label{all_comparison}
+  \begin{tabular}{l|cc|cc|cc}
+    \hline
+    \multirow{2}{*}{\textbf{Program}} & 
+    \multicolumn{2}{c|}{\textbf{KLEESpectre}} & 
+    \multicolumn{2}{c|}{\textbf{SpecFuzz}} & 
+    \multicolumn{2}{c}{\textbf{提案手法}} \\
+    \cline{2-7}
+    & \textbf{Recall} & \textbf{MMU(MB)} & 
+    \textbf{Recall} &  \textbf{MMU(MB)} & 
+    \textbf{Recall} &  \textbf{MMU(MB)} \\
+    \hline
+    AES   & 0.67 & 148.52  & 0.67 & 14.68 & 0.67 & 149.19 \\
+    ARIA  & 1.00 & 149.74  & 1.00 & 14.75 & 0.75 & 145.49 \\
+    CAST  & 1.00 & 83.66   & 0.50 & 14.95 & 0.50 & 67.89 \\
+    DES   & 1.00 & 4783.49 & 0.50 & 14.81 & 0.75 & 4782.86 \\
+    IDEA  & 1.00 & 8580.13 & 1.00 & 14.72 & 1.00 & 431.29 \\
+    MD2   & 1.00 & 621.91  & 1.00 & 16.38 & 1.00 & 199.55 \\
+    RC5   & 0.67 & 722.34  & 0.67 & 14.72 & 1.00 & 89.90 \\
+    \midrule
+    AVERAGE & 0.91 & 2155.68 & 0.76 & 15.00 & 0.81 & 838.02\\
+    \hline
+  \end{tabular}
+\end{table}
+

@@ -6,7 +6,7 @@
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Prime+Probeの概要}}{6}{figure.caption.7}%
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Spectre-PHT 脆弱性を含むコード片}}{7}{figure.caption.8}%
 \contentsline {figure}{\numberline {2.5}{\ignorespaces 分岐予測器のトレーニング}}{8}{figure.caption.9}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Spectre-PHT脆弱性を含むコード片に対し、lfence命令による防御策を適用した例}}{9}{figure.caption.10}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Spectre Gadgetに対し、lfence命令による防御策を適用した例}}{9}{figure.caption.10}%
 \contentsline {figure}{\numberline {2.7}{\ignorespaces SLH適用前のSpectre Gadget}}{10}{figure.caption.11}%
 \contentsline {figure}{\numberline {2.8}{\ignorespaces SLH適用後のコード辺}}{10}{figure.caption.12}%
 \contentsline {figure}{\numberline {2.9}{\ignorespaces KLEESpectreにおけるコード例}}{12}{figure.caption.13}%
@@ -17,7 +17,7 @@
 \contentsline {figure}{\numberline {3.2}{\ignorespaces 記号実行におけるストア状態の爆発}}{17}{figure.caption.17}%
 \contentsline {figure}{\numberline {3.3}{\ignorespaces Motivating Example}}{19}{figure.caption.18}%
 \addvspace {10\jsc@mpt }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Order 1の記号実行フェーズの解析}}{21}{figure.caption.20}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Order1の記号実行フェーズの解析}}{21}{figure.caption.20}%
 \contentsline {figure}{\numberline {4.2}{\ignorespaces ファジングフェーズにおける分岐予測ミスのシミュレートが不要な例}}{22}{figure.caption.21}%
 \contentsline {figure}{\numberline {4.3}{\ignorespaces Removable Directionを特定した結果}}{24}{figure.caption.23}%
 \contentsline {figure}{\numberline {4.4}{\ignorespaces Target Directionを取得した結果}}{24}{figure.caption.24}%
